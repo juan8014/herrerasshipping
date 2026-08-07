@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import Image from "next/image"
 import { motion } from "framer-motion"
 import { ChevronRight, ArrowRight } from "lucide-react"
+import { Parallax } from "@/components/parallax"
 
 export function Hero() {
   // Hook para acceder a las traducciones
@@ -37,11 +38,11 @@ export function Hero() {
       id="home"
       className="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden bg-gradient-to-br from-white via-white to-[#7BB5E6]/10"
     >
-      {/* Elementos de fondo decorativos */}
+      {/* Elementos de fondo decorativos (parallax GSAP) */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-[#0047AB]/5 blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
-        <div className="absolute top-1/2 left-0 w-72 h-72 rounded-full bg-[#D93025]/5 blur-3xl" />
+        <Parallax speed={0.25} className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-[#0047AB]/5 blur-3xl" />
+        <Parallax speed={-0.18} className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
+        <Parallax speed={0.12} className="absolute top-1/2 left-0 w-72 h-72 rounded-full bg-[#D93025]/5 blur-3xl" />
       </div>
 
       {/* Patrón de fondo con cuadrícula */}

@@ -7,9 +7,10 @@
 "use client"
 
 import { useLanguage } from "@/components/language-provider"
-import { motion, useInView } from "framer-motion"
+import { motion, useInView, type Variants } from "framer-motion"
 import { useRef } from "react"
 import { Shield, Eye } from "lucide-react"
+import { Parallax } from "@/components/parallax"
 
 export function MissionVision() {
   // Hook para acceder a las traducciones
@@ -20,7 +21,7 @@ export function MissionVision() {
   const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
 
   // Variantes de animación para el contenedor
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -31,7 +32,7 @@ export function MissionVision() {
   }
 
   // Variantes de animación para los elementos individuales
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
@@ -42,10 +43,10 @@ export function MissionVision() {
 
   return (
     <section id="mission" ref={sectionRef} className="py-16 sm:py-20 md:py-24 bg-white relative overflow-hidden">
-      {/* Elementos de fondo decorativos */}
+      {/* Elementos de fondo decorativos (parallax GSAP) */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-[#0047AB]/5 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
+        <Parallax speed={0.22} className="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-[#0047AB]/5 blur-3xl" />
+        <Parallax speed={-0.15} className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
       </div>
 
       <div className="container mx-auto px-3 sm:px-4 relative z-10">

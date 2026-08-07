@@ -1,12 +1,24 @@
 import type React from "react"
 import type { Metadata } from "next/types"
-import { Inter } from "next/font/google"
+import { Lexend, Source_Sans_3 } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { LanguageProvider } from "@/components/language-provider"
+import { ScrollProgress } from "@/components/scroll-progress"
 
-// Configuración de la fuente Inter con subconjunto latino
-const inter = Inter({ subsets: ["latin"] })
+// Lexend para titulares: diseñada para legibilidad y sensación de confianza.
+const lexend = Lexend({
+  subsets: ["latin"],
+  variable: "--font-lexend",
+  display: "swap",
+})
+
+// Source Sans 3 para el cuerpo: neutra, muy legible en párrafos largos.
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  variable: "--font-source-sans",
+  display: "swap",
+})
 
 // Metadatos de la aplicación para SEO
 export const metadata: Metadata = {
@@ -52,9 +64,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-icon.png" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className={inter.className}>
+      <body className={`${sourceSans.variable} ${lexend.variable} font-sans`}>
         {/* Proveedor de temas para modo claro/oscuro */}
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
+          {/* Barra de progreso de scroll (GSAP ScrollTrigger) */}
+          <ScrollProgress />
           {/* Proveedor de idiomas para internacionalización */}
           <LanguageProvider>{children}</LanguageProvider>
         </ThemeProvider>

@@ -10,6 +10,7 @@ import { useLanguage } from "@/components/language-provider"
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
 import { Clock, Zap, Package } from "lucide-react"
+import { Parallax } from "@/components/parallax"
 
 export function Services() {
   // Hook para acceder a las traducciones
@@ -46,10 +47,10 @@ export function Services() {
 
   return (
     <section id="services" ref={sectionRef} className="py-16 sm:py-20 md:py-24 bg-white relative overflow-hidden">
-      {/* Elementos de fondo decorativos */}
+      {/* Elementos de fondo decorativos (parallax GSAP) */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 right-0 w-64 h-64 rounded-full bg-[#0047AB]/5 blur-3xl" />
-        <div className="absolute bottom-0 left-1/4 w-72 h-72 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
+        <Parallax speed={0.2} className="absolute top-1/4 right-0 w-64 h-64 rounded-full bg-[#0047AB]/5 blur-3xl" />
+        <Parallax speed={-0.14} className="absolute bottom-0 left-1/4 w-72 h-72 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
       </div>
 
       <div className="container mx-auto px-3 sm:px-4 relative z-10">

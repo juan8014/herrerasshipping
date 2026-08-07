@@ -12,7 +12,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useLanguage } from "@/components/language-provider"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Globe, ChevronDown } from "lucide-react"
+import { Menu, X, Globe, ChevronDown, LogIn } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
@@ -40,11 +40,11 @@ export function Header() {
 
   // Elementos de navegación con sus enlaces y etiquetas
   const navItems = [
-    { href: "#home", label: t("nav.home") },
-    { href: "#mission", label: t("nav.mission") },
-    { href: "#services", label: t("nav.services") },
-    { href: "#contact", label: t("nav.contact") },
-    { href: "/my-shipments", label: t("nav.my_shipments") },
+    { href: "/#home", label: t("nav.home") },
+    { href: "/#mission", label: t("nav.mission") },
+    { href: "/#services", label: t("nav.services") },
+    { href: "/#contact", label: t("nav.contact") },
+    { href: "/my-shipments", label: language === "es" ? "Rastrear" : "Track" },
   ]
 
   return (
@@ -109,9 +109,22 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
+          {/* Botón de login (acceso al panel) */}
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="flex items-center gap-1.5 text-[#234974] hover:bg-[#7BB5E6]/10 hover:text-[#0047AB]"
+          >
+            <Link href="/login">
+              <LogIn className="h-4 w-4" />
+              {language === "es" ? "Ingresar" : "Login"}
+            </Link>
+          </Button>
+
           {/* Botón de contacto */}
           <Button asChild className="bg-[#0F4C81] hover:bg-[#0F4C81]/90 text-white rounded-full px-4 xl:px-6 text-sm">
-            <Link href="#contact">{t("hero.cta")}</Link>
+            <Link href="/#contact">{t("hero.cta")}</Link>
           </Button>
         </div>
 
@@ -150,8 +163,16 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+          <Link
+            href="/login"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="flex items-center gap-2 py-2 font-medium text-[#234974] transition-colors hover:text-[#0047AB]"
+          >
+            <LogIn className="h-4 w-4" />
+            {language === "es" ? "Ingresar" : "Login"}
+          </Link>
           <Button asChild className="bg-[#0F4C81] hover:bg-[#0F4C81]/90 text-white w-full mt-2">
-            <Link href="#contact" onClick={() => setIsMobileMenuOpen(false)}>
+            <Link href="/#contact" onClick={() => setIsMobileMenuOpen(false)}>
               {t("hero.cta")}
             </Link>
           </Button>

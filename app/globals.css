@@ -76,6 +76,48 @@
   html {
     scroll-behavior: smooth;
   }
+
+  /* Titulares con Lexend; el cuerpo hereda Source Sans 3 desde <body>. */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-lexend), ui-sans-serif, system-ui, sans-serif;
+  }
+
+  /* Foco visible y consistente para navegación por teclado (a11y). */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+
+  /* Cursor de puntero en todo lo accionable. */
+  button:not(:disabled),
+  a[href],
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  /* Respetar la preferencia de movimiento reducido del sistema. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 /* Custom animations */
