@@ -1,0 +1,12 @@
+# Netlify configuration
+#
+# Secrets scanning — SEGURIDAD:
+# Se excluyen del escaneo ÚNICAMENTE las claves NEXT_PUBLIC_*, que son públicas
+# por diseño: Next.js las hornea en el bundle del navegador a propósito (para que
+# el cliente hable con Supabase) y la anon key está protegida por Row Level
+# Security. El secreto real, SUPABASE_SERVICE_ROLE_KEY, NO se lista acá: el
+# escáner lo sigue vigilando, así un filtrado accidental al bundle rompe el build.
+#
+# No se desactiva el escaneo (SECRETS_SCAN_ENABLED sigue en true por defecto).
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY"
