@@ -1,9 +1,10 @@
 "use client"
 
 import type React from "react"
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { useLanguage } from "@/components/language-provider"
-import { motion, useInView, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import { Reveal } from "@/components/motion/reveal"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -23,9 +24,7 @@ import {
 import { cn } from "@/lib/utils"
 
 export function ContactSection() {
-  const { t } = useLanguage()
-  const sectionRef = useRef<HTMLElement>(null)
-  const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
+  const { t, language } = useLanguage()
 
   // Form state
   const [formStep, setFormStep] = useState(0)
@@ -141,6 +140,11 @@ export function ContactSection() {
     },
   ]
 
+  const features =
+    language === "en"
+      ? ["Guaranteed delivery", "Real-time tracking", "Best rates"]
+      : ["Entrega garantizada", "Rastreo en tiempo real", "La mejor tarifa"]
+
   const packageSizes = [
     {
       value: "small",
@@ -162,7 +166,6 @@ export function ContactSection() {
   return (
     <section
       id="contact"
-      ref={sectionRef}
       className="py-16 sm:py-20 md:py-24 bg-gradient-to-b from-[#7BB5E6]/10 to-white relative overflow-hidden"
     >
       {/* Background Elements */}
@@ -172,26 +175,21 @@ export function ContactSection() {
       </div>
 
       <div className="container mx-auto px-3 sm:px-4 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10 sm:mb-12 md:mb-16"
-        >
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#234974] mb-3 sm:mb-4">
+        <Reveal className="text-center mb-10 sm:mb-12 md:mb-16">
+          <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-[#0F4C81]/10 px-3 py-1 text-xs font-medium text-[#0F4C81]">
+            <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("footer.contact")}
+          </span>
+          <h2 className="mb-3 bg-gradient-to-r from-[#234974] to-[#0F4C81] bg-clip-text text-2xl font-bold text-transparent sm:mb-4 sm:text-3xl md:text-4xl">
             {t("contact.title")}
           </h2>
           <p className="text-base sm:text-lg md:text-xl text-[#234974]/70 max-w-2xl mx-auto">{t("contact.subtitle")}</p>
-        </motion.div>
+        </Reveal>
 
         <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 md:gap-12">
           {/* Interactive Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 shadow-xl border border-[#7BB5E6]/20 h-full">
+          <Reveal>
+            <div className="h-full rounded-2xl border border-[#234974]/10 bg-white/80 p-5 shadow-sm backdrop-blur-sm sm:rounded-3xl sm:p-6 md:p-8">
               {isSubmitted ? (
                 <AnimatePresence>
                   <motion.div
@@ -280,18 +278,34 @@ export function ContactSection() {
                 <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 md:space-y-6">
                   {/* Progress Indicator */}
                   <div className="mb-5 sm:mb-6 md:mb-8">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs sm:text-sm font-medium text-[#234974]">Paso {formStep + 1} de 3</span>
-                      <span className="text-xs sm:text-sm text-[#234974]/60">
-                        {formStep === 0 ? "Información personal" : formStep === 1 ? "Detalles del envío" : "Mensaje"}
-                      </span>
+                    <div className="flex items-center">
+                      {[0, 1, 2].map((step) => (
+                        <div key={step} className={cn("flex items-center", step < 2 && "flex-1")}>
+                          <div
+                            className={cn(
+                              "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors",
+                              step <= formStep
+                                ? "bg-[#0F4C81] text-white"
+                                : "bg-[#7BB5E6]/20 text-[#234974]/60",
+                            )}
+                          >
+                            {step + 1}
+                          </div>
+                          {step < 2 && (
+                            <div className="mx-2 h-0.5 flex-1 overflow-hidden rounded-full bg-[#7BB5E6]/20">
+                              <div
+                                className="h-full rounded-full bg-[#0F4C81] transition-all duration-300"
+                                style={{ width: step < formStep ? "100%" : "0%" }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
-                    <div className="w-full h-1.5 sm:h-2 bg-[#7BB5E6]/20 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-[#0F4C81] transition-all duration-300 rounded-full"
-                        style={{ width: `${((formStep + 1) / 3) * 100}%` }}
-                      ></div>
-                    </div>
+                    <p className="mt-2 text-xs font-medium text-[#234974]/70 sm:text-sm">
+                      Paso {formStep + 1} de 3 ·{" "}
+                      {formStep === 0 ? "Información personal" : formStep === 1 ? "Detalles del envío" : "Mensaje"}
+                    </p>
                   </div>
 
                   {/* Step 1: Personal Information */}
@@ -573,14 +587,10 @@ export function ContactSection() {
                 </form>
               )}
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* Contact Information */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
+          <Reveal delay={0.1}>
             <div className="bg-gradient-to-br from-[#0F4C81] to-[#234974] text-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 md:p-8 shadow-xl h-full relative overflow-hidden flex flex-col">
               {/* Background Pattern */}
               <div className="absolute inset-0 bg-pattern opacity-10" />
@@ -607,7 +617,10 @@ export function ContactSection() {
 
                 <div className="space-y-3 sm:space-y-4">
                   {contactInfo.map((item, index) => (
-                    <div key={index} className="flex items-start gap-3 sm:gap-4">
+                    <div
+                      key={index}
+                      className="flex items-start gap-3 rounded-xl p-2 transition-colors hover:bg-white/5 sm:gap-4"
+                    >
                       <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0">
                         {item.icon}
                       </div>
@@ -618,9 +631,18 @@ export function ContactSection() {
                     </div>
                   ))}
                 </div>
+
+                <div className="mt-6 space-y-2.5 border-t border-white/15 pt-5 sm:mt-8">
+                  {features.map((f) => (
+                    <div key={f} className="flex items-center gap-2 text-sm text-white/90 sm:text-base">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-300" aria-hidden="true" />
+                      {f}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

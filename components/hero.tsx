@@ -1,155 +1,120 @@
 /**
- * Componente Hero - Sección principal de bienvenida
+ * Hero - Sección principal con video de fondo y animación GSAP de entrada.
  *
- * Este componente muestra la sección principal de la página con un título llamativo,
- * subtítulo, botones de acción y una ilustración. Incluye animaciones y efectos visuales.
+ * Adaptado a la marca Herrera's (azul + Lexend). Bilingüe (ES/EN) vía el
+ * language-provider. El navbar lo provee el componente Header (no se duplica).
+ * La entrada usa GSAP (gsap.fromTo con stagger) y respeta prefers-reduced-motion.
  */
 "use client"
 
+import { useRef } from "react"
+import Link from "next/link"
+import { gsap } from "gsap"
+import { useGSAP } from "@gsap/react"
+import { ArrowRightCircle, Plane, Package, Globe } from "lucide-react"
 import { useLanguage } from "@/components/language-provider"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import { motion } from "framer-motion"
-import { ChevronRight, ArrowRight } from "lucide-react"
-import { Parallax } from "@/components/parallax"
+import { FloatingBackground } from "@/components/motion/floating-background"
+import { UsFlag, SvFlag } from "@/components/ui/flags"
+
+gsap.registerPlugin(useGSAP)
+
+const COPY = {
+  es: {
+    a: "Envía",
+    b: "Tus",
+    c: "Encomiendas",
+    l2a: "De USA",
+    l2b: "a El Salvador",
+    l2c: "y viceversa",
+    subtitle:
+      "Conectando Estados Unidos y El Salvador sin estrés. Transportamos tus paquetes, documentos y carga en ambas direcciones con entrega garantizada, rastreo en tiempo real y la mejor tarifa.",
+    cta: "Programa tu Envío",
+  },
+  en: {
+    a: "Send",
+    b: "Your",
+    c: "Packages",
+    l2a: "From the USA",
+    l2b: "to El Salvador",
+    l2c: "and back",
+    subtitle:
+      "Connecting the United States and El Salvador stress-free. We move your packages, documents, and cargo in both directions with guaranteed delivery, real-time tracking, and the best rates.",
+    cta: "Schedule your Shipment",
+  },
+} as const
+
+const inlineIcon = "inline-block h-6 w-6 align-middle text-[#0F4C81] relative -top-0.5 mx-1.5"
 
 export function Hero() {
-  // Hook para acceder a las traducciones
-  const { t } = useLanguage()
+  const root = useRef<HTMLElement>(null)
+  const { language } = useLanguage()
+  const t = language === "en" ? COPY.en : COPY.es
 
-  // Función para desplazarse a la sección de contacto
-  const scrollToContact = () => {
-    const contactSection = document.getElementById("contact")
-    if (contactSection) {
-      contactSection.scrollIntoView({ behavior: "smooth" })
-    }
-  }
-
-  // Función para desplazarse a la sección de misión
-  const scrollToMission = () => {
-    const missionSection = document.getElementById("mission")
-    if (missionSection) {
-      missionSection.scrollIntoView({ behavior: "smooth" })
-    }
-  }
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia()
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".hero-element",
+          { y: 30, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.8, stagger: 0.15, ease: "power3.out" },
+        )
+      })
+      return () => mm.revert()
+    },
+    { scope: root },
+  )
 
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center pt-16 sm:pt-20 overflow-hidden bg-gradient-to-br from-white via-white to-[#7BB5E6]/10"
+      ref={root}
+      className="relative flex min-h-screen items-center justify-center overflow-hidden"
     >
-      {/* Elementos de fondo decorativos (parallax GSAP) */}
-      <div className="absolute inset-0 overflow-hidden">
-        <Parallax speed={0.25} className="absolute top-1/4 right-0 w-96 h-96 rounded-full bg-[#0047AB]/5 blur-3xl" />
-        <Parallax speed={-0.18} className="absolute bottom-0 left-1/4 w-80 h-80 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
-        <Parallax speed={0.12} className="absolute top-1/2 left-0 w-72 h-72 rounded-full bg-[#D93025]/5 blur-3xl" />
-      </div>
+      {/* Fondo animado flotante (aviones/paquetes/pines en loop GSAP), en marca */}
+      <FloatingBackground />
 
-      {/* Patrón de fondo con cuadrícula */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-5" />
+      {/* Overlay claro para asegurar legibilidad del texto sobre los iconos */}
+      <div aria-hidden="true" className="absolute inset-0 z-0 bg-white/30" />
 
-      <div className="container mx-auto px-3 sm:px-4 z-10 py-8 sm:py-12">
-        <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-          {/* Contenido izquierdo - Texto y botones */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="flex flex-col items-start text-left"
+      {/* Contenido */}
+      <div className="relative z-10 mx-auto w-full max-w-[1280px] px-5 pb-12 pt-[clamp(96px,12vw,140px)] sm:px-8">
+        <div className="mx-auto max-w-[720px] text-center">
+          <h1
+            className="hero-element font-heading font-bold text-[#234974]"
+            style={{ fontSize: "clamp(1.9rem, 5.5vw, 3.4rem)", lineHeight: 1.05, letterSpacing: "-0.01em" }}
           >
-            {/* Badge de servicio confiable */}
-            <div className="inline-flex items-center px-2 sm:px-3 py-1 rounded-full bg-[#0047AB]/10 text-[#0047AB] text-xs sm:text-sm font-medium mb-4 sm:mb-6">
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#0047AB] mr-1.5 sm:mr-2"></span>
-              {t("hero.badge")}
-            </div>
+            {t.a}
+            <Plane className={inlineIcon} aria-hidden="true" />
+            {t.b}
+            <Package className={inlineIcon} aria-hidden="true" />
+            {t.c}
+            <br />
+            {t.l2a}
+            <UsFlag className="relative -top-0.5 mx-1.5 inline-block h-6 w-9 align-middle rounded-[3px] shadow-sm ring-1 ring-black/5" />
+            {t.l2b}
+            <SvFlag className="relative -top-0.5 mx-1.5 inline-block h-6 w-9 align-middle rounded-[3px] shadow-sm ring-1 ring-black/5" />
+            {t.l2c}
+            <Globe className={inlineIcon} aria-hidden="true" />
+          </h1>
 
-            {/* Título principal con banderas */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#234974] mb-4 sm:mb-6 leading-tight">
-              {t("hero.title")}
-              <span className="text-[#0047AB] ml-2 whitespace-nowrap">🇺🇸✈️🇸🇻</span>
-            </h1>
+          <p
+            className="hero-element mx-auto mt-6 max-w-[600px] text-[#234974]/80"
+            style={{ fontSize: "clamp(0.95rem, 2.5vw, 1.15rem)", lineHeight: 1.65 }}
+          >
+            {t.subtitle}
+          </p>
 
-            {/* Subtítulo */}
-            <p className="text-base sm:text-lg md:text-xl text-[#234974]/80 max-w-xl mb-6 sm:mb-8">
-              {t("hero.subtitle")}
-            </p>
-
-            {/* Botones de acción */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto">
-              {/* Botón principal - Solicitar envío */}
-              <Button
-                onClick={scrollToContact}
-                className="bg-[#0F4C81] hover:bg-[#0F4C81]/90 text-white px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-6 rounded-full text-sm sm:text-base md:text-lg font-medium transition-all hover:shadow-lg hover:translate-y-[-2px] flex items-center justify-center gap-2"
-              >
-                {t("hero.cta")}
-                <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-
-              {/* Botón secundario - Conocer más */}
-              <Button
-                onClick={scrollToMission}
-                variant="outline"
-                className="border-[#0F4C81] text-[#0F4C81] hover:bg-[#0F4C81]/10 px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-6 rounded-full text-sm sm:text-base md:text-lg font-medium transition-all flex items-center justify-center gap-2"
-              >
-                {t("hero.secondary_cta")}
-                <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-            </div>
-
-            {/* Animación de ruta de envío */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 1 }}
-              className="mt-8 sm:mt-12 flex items-center"
+          <div className="hero-element mt-8 flex justify-center">
+            <Link
+              href="/#contact"
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-[#0F4C81] px-6 py-4 font-medium text-white shadow-[0_4px_24px_rgba(15,76,129,0.28)] transition-all hover:scale-105 hover:brightness-110 active:scale-95"
+              style={{ minWidth: 210, fontSize: "clamp(0.95rem, 2vw, 1.05rem)" }}
             >
-              <div className="flex items-center space-x-2 sm:space-x-3 text-[#234974]/70 text-xs sm:text-sm">
-                {/* Origen - USA */}
-                <div className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#0047AB]/10">
-                  <span className="font-bold text-[#0047AB] text-xs sm:text-sm">US</span>
-                </div>
-
-                {/* Línea animada entre origen y destino */}
-                <div className="relative w-16 sm:w-24 h-[2px] bg-[#234974]/20 overflow-hidden">
-                  <motion.div
-                    animate={{
-                      x: ["-100%", "100%"],
-                    }}
-                    transition={{
-                      repeat: Number.POSITIVE_INFINITY,
-                      duration: 2,
-                      ease: "linear",
-                    }}
-                    className="absolute top-0 left-0 w-4 sm:w-6 h-full bg-[#0047AB]"
-                  />
-                </div>
-
-                {/* Destino - El Salvador */}
-                <div className="flex items-center justify-center w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#D93025]/10">
-                  <span className="font-bold text-[#D93025] text-xs sm:text-sm">SV</span>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Contenido derecho - Ilustración */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative flex justify-center lg:justify-end mt-4 sm:mt-0"
-          >
-            <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-              <Image
-                src="/images/delivery-illustration.png"
-                alt="Delivery Illustration"
-                width={500}
-                height={500}
-                className="object-contain w-full h-auto"
-                priority
-              />
-            </div>
-          </motion.div>
+              {t.cta}
+              <ArrowRightCircle className="h-5 w-5" aria-hidden="true" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>

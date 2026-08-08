@@ -6,6 +6,8 @@
  */
 import { Header } from "@/components/header"
 import { Hero } from "@/components/hero"
+import { Reveal } from "@/components/motion/reveal"
+import { TravelingPackage } from "@/components/motion/traveling-package"
 import { MissionVision } from "@/components/mission-vision"
 import { Values } from "@/components/values"
 import { Services } from "@/components/services"
@@ -21,6 +23,11 @@ export default function Home() {
 
       {/* Sección de bienvenida */}
       <Hero />
+
+      {/* Motivo: el paquete viajando de USA a El Salvador (decorativo, scroll) */}
+      <Reveal>
+        <TravelingPackage />
+      </Reveal>
 
       {/* Sección de misión y visión */}
       <MissionVision />

@@ -1,99 +1,102 @@
 /**
- * Componente MissionVision - Sección de misión y visión
- *
- * Este componente muestra la misión y visión de la empresa en dos tarjetas
- * con animaciones y efectos visuales.
+ * MissionVision - Estilo editorial: sin cajas, hairlines + tipografía + aire.
+ * Se acompaña con la ilustración de marca (repartidor + clienta, ruta US→SV),
+ * que entra por scroll (Reveal) y flota sutilmente en loop (GSAP). Respeta
+ * prefers-reduced-motion. Copy sin cambios.
  */
 "use client"
 
-import { useLanguage } from "@/components/language-provider"
-import { motion, useInView, type Variants } from "framer-motion"
 import { useRef } from "react"
+import Image from "next/image"
+import { gsap } from "gsap"
+import { useGSAP } from "@gsap/react"
+import { useLanguage } from "@/components/language-provider"
 import { Shield, Eye } from "lucide-react"
-import { Parallax } from "@/components/parallax"
+import { Reveal, StaggerReveal } from "@/components/motion/reveal"
+
+gsap.registerPlugin(useGSAP)
 
 export function MissionVision() {
-  // Hook para acceder a las traducciones
-  const { t } = useLanguage()
-  // Referencia para detectar cuando la sección es visible
-  const sectionRef = useRef<HTMLElement>(null)
-  // Hook para detectar cuando la sección entra en el viewport
-  const isInView = useInView(sectionRef, { once: true, amount: 0.3 })
+  const { t, language } = useLanguage()
+  const eyebrow = language === "en" ? "Who we are" : "Quiénes somos"
+  const illustrationAlt =
+    language === "en"
+      ? "Herrera's courier handing a package to a customer, with a plane on the US→El Salvador route"
+      : "Repartidor de Herrera's entregando un paquete a una clienta, con un avión en la ruta USA→El Salvador"
 
-  // Variantes de animación para el contenedor
-  const containerVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
+  const floatRef = useRef<HTMLDivElement>(null)
 
-  // Variantes de animación para los elementos individuales
-  const itemVariants: Variants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.6, ease: "easeOut" },
+  useGSAP(
+    () => {
+      const el = floatRef.current
+      if (!el) return
+      const mm = gsap.matchMedia()
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.to(el, {
+          y: -14,
+          duration: 3.2,
+          ease: "sine.inOut",
+          repeat: -1,
+          yoyo: true,
+        })
+      })
+      return () => mm.revert()
     },
-  }
+    { scope: floatRef },
+  )
+
+  const items = [
+    { Icon: Shield, label: t("mission.title"), text: t("mission.text") },
+    { Icon: Eye, label: t("vision.title"), text: t("vision.text") },
+  ]
 
   return (
-    <section id="mission" ref={sectionRef} className="py-16 sm:py-20 md:py-24 bg-white relative overflow-hidden">
-      {/* Elementos de fondo decorativos (parallax GSAP) */}
-      <div className="absolute inset-0 overflow-hidden">
-        <Parallax speed={0.22} className="absolute top-0 left-1/4 w-64 h-64 rounded-full bg-[#0047AB]/5 blur-3xl" />
-        <Parallax speed={-0.15} className="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-[#7BB5E6]/10 blur-3xl" />
-      </div>
-
-      <div className="container mx-auto px-3 sm:px-4 relative z-10">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-          className="grid md:grid-cols-2 gap-6 sm:gap-8 md:gap-12"
-        >
-          {/* Tarjeta de Misión */}
-          <motion.div
-            variants={itemVariants}
-            className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl border border-[#7BB5E6]/20 transform hover:translate-y-[-5px] transition-transform duration-300 group"
-          >
-            {/* Icono con gradiente */}
-            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#0F4C81] to-[#5B9BD5] flex items-center justify-center mb-6 sm:mb-8 group-hover:shadow-lg transition-shadow duration-300">
-              <Shield className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
+    <section id="mission" className="relative bg-white py-16 sm:py-20 md:py-28">
+      <div className="container mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="grid items-center gap-10 md:grid-cols-[minmax(0,0.95fr)_minmax(0,1fr)] md:gap-14">
+          {/* Ilustración de marca */}
+          <Reveal className="order-2 md:order-1">
+            <div ref={floatRef} className="relative mx-auto w-full max-w-[520px]">
+              {/* Halo suave detrás de los personajes */}
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 -z-10 rounded-full bg-gradient-to-tr from-[#7BB5E6]/20 via-[#5B9BD5]/10 to-transparent blur-2xl"
+              />
+              <Image
+                src="/images/delivery-illustration.png"
+                alt={illustrationAlt}
+                width={1536}
+                height={1024}
+                sizes="(max-width: 768px) 90vw, 520px"
+                className="h-auto w-full"
+              />
             </div>
+          </Reveal>
 
-            {/* Título de la misión */}
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#234974] mb-4 sm:mb-6">
-              {t("mission.title")}
-            </h2>
+          {/* Texto editorial */}
+          <div className="order-1 md:order-2">
+            <Reveal className="mb-6 sm:mb-8">
+              <span className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0F4C81]">
+                {eyebrow}
+              </span>
+            </Reveal>
 
-            {/* Texto de la misión */}
-            <p className="text-[#234974]/80 leading-relaxed text-sm sm:text-base md:text-lg">{t("mission.text")}</p>
-          </motion.div>
-
-          {/* Tarjeta de Visión */}
-          <motion.div
-            variants={itemVariants}
-            className="bg-white rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-xl border border-[#7BB5E6]/20 transform hover:translate-y-[-5px] transition-transform duration-300 group"
-          >
-            {/* Icono con gradiente */}
-            <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl bg-gradient-to-br from-[#0047AB] to-[#7BB5E6] flex items-center justify-center mb-6 sm:mb-8 group-hover:shadow-lg transition-shadow duration-300">
-              <Eye className="h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" />
-            </div>
-
-            {/* Título de la visión */}
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#234974] mb-4 sm:mb-6">
-              {t("vision.title")}
-            </h2>
-
-            {/* Texto de la visión */}
-            <p className="text-[#234974]/80 leading-relaxed text-sm sm:text-base md:text-lg">{t("vision.text")}</p>
-          </motion.div>
-        </motion.div>
+            <StaggerReveal className="border-b border-[#234974]/10">
+              {items.map(({ Icon, label, text }) => (
+                <div
+                  key={label}
+                  className="group border-t border-[#234974]/10 py-6 transition-colors md:py-8"
+                >
+                  <div className="flex items-center gap-3">
+                    <Icon className="h-6 w-6 shrink-0 text-[#0F4C81]" strokeWidth={1.5} aria-hidden="true" />
+                    <h2 className="text-2xl font-bold text-[#234974] md:text-3xl">{label}</h2>
+                  </div>
+                  <p className="mt-3 text-lg leading-relaxed text-[#234974]/70">{text}</p>
+                </div>
+              ))}
+            </StaggerReveal>
+          </div>
+        </div>
       </div>
     </section>
   )

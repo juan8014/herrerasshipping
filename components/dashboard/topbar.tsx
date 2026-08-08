@@ -1,12 +1,16 @@
 import { LogOut } from "lucide-react"
 import { logout } from "@/app/login/actions"
+import { MobileNav } from "@/components/dashboard/mobile-nav"
 
 export function Topbar({ title, adminEmail }: { title: string; adminEmail: string }) {
   const initial = (adminEmail.trim()[0] ?? "A").toUpperCase()
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#7BB5E6]/20 bg-white/80 px-4 backdrop-blur-md sm:px-6">
-      <h1 className="text-lg font-semibold text-[#234974]">{title}</h1>
+      <div className="flex min-w-0 items-center gap-2">
+        <MobileNav />
+        <h1 className="truncate text-base font-semibold text-[#234974] sm:text-lg">{title}</h1>
+      </div>
 
       <div className="flex items-center gap-3">
         <div className="hidden text-right sm:block">
