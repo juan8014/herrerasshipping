@@ -14,6 +14,7 @@ import { Services } from "@/components/services"
 import { ContactSection } from "@/components/contact-section"
 import { Footer } from "@/components/footer"
 import { ScrollToTop } from "@/components/scroll-to-top"
+import { ChatWidget } from "@/components/chat-widget"
 
 export default function Home() {
   return (
@@ -46,6 +47,9 @@ export default function Home() {
 
       {/* Botón para volver al inicio de la página */}
       <ScrollToTop />
+
+      {/* Asistente virtual (Gemini, server-side) */}
+      <ChatWidget />
     </main>
   )
 }
